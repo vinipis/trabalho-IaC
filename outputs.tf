@@ -1,3 +1,4 @@
+#Aqui estão as saidas mais bonitinhas no terminal
 output "instance_id" {
   description = "ID da instancia"
   value = aws_instance.vini-server.id

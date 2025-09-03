@@ -9,7 +9,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y jq lvm2 python-is-python3 python3-simplejson python3-apt python3-pip s3cmd parted vnstat ca-certificates curl gnupg lsb-release chrony
 
-# Docker repo
+# Docker
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 chmod a+r /etc/apt/keyrings/docker.gpg

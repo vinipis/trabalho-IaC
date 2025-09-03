@@ -24,14 +24,14 @@ variable "instance_name" {
 
 variable "key_name" {
   description = "Nome do Key Pair a ser criado/usado no server"
-  default = "vini-key"
+  default = "vini-key" #pode ser qualquer nome, coloquei o meu como exemplo
 }
 
-variable "public_key_path" {
-  description = "caminho da key.pub"
-  type = string
-  default = "~/.ssh/id_rsa.pub"
-}
+#variable "public_key_path" {
+#  description = "caminho da key.pub"
+#  type = string
+#  default = "~/.ssh/id_rsa.pub"
+#}
 
 /***********************
  * AMI dinâmica (Ubuntu)
