@@ -27,11 +27,11 @@ variable "key_name" {
   default = "vini-key" #pode ser qualquer nome, coloquei o meu como exemplo
 }
 
-#variable "public_key_path" {
-#  description = "caminho da key.pub"
-#  type = string
-#  default = "~/.ssh/id_rsa.pub"
-#}
+variable "public_key_path" {
+  description = "caminho da key.pub"
+  type = string
+  default = "~/.ssh/id_rsa.pub"
+}
 
 /***********************
  * AMI dinâmica (Ubuntu)
