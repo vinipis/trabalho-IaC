@@ -33,3 +33,7 @@ output "userdata" {
   description = "file userdata"
   value = data.template_file.userdata
 }
+
+output "extra_volume_devices" {
+  value = [for v in var.ebs_volumes : v.device_name]
+}

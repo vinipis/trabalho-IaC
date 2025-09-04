@@ -13,4 +13,14 @@ resource "aws_instance" "vini-server" {
   tags = {
     Name = var.instance_name
   }
+
+    dynamic "ebs_block_device" {
+    for_each = var.ebs_volumes
+    content {
+      device_name           = ebs_block_device.value.device_name
+      volume_size           = ebs_block_device.value.volume_size
+      volume_type           = ebs_block_device.value.volume_type
+      delete_on_termination = true
+    }
+  }
 }
