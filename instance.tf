@@ -2,7 +2,7 @@ locals {
   tags_name = {
     customer = "vini"
     protocolo = "fiap"
-    snapshotdiario = "yes"
+    ## no lugar deste comentário antes havia "snapshotdiario" que eu sei de onde vc tirou :) Isso só serve no contexto que estava, fora não faz muito uso.
   }
 }
 
