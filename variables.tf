@@ -48,11 +48,7 @@ variable "ami_owners" {
 variable "ami_name_pattern" {
   description = "nome padrão"
   type        = string
-  default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
-}
-
-variable "ami_virtualization" {
-  description = "tipo de virtualização"
-  type        = string
-  default     = "hvm"
+  ## Como 24.04 é a mais nova LTS, deixei aí por padrão. Só pra você saber que existe
+  #default     = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
+  default     = "ubuntu/images/hvm-ssd*/ubuntu-noble-24.04-amd64-server-*"
 }
