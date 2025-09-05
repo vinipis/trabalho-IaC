@@ -29,10 +29,13 @@ output "security_group_id" {
   value       = aws_security_group.allow_ssh_http
 }
 
-output "userdata" {
-  description = "file userdata"
-  value       = data.template_file.userdata
-}
+## O módulo template_file está deprecado em versões mais recentes do terraform.
+## Use "locals" com a função templatefile() conforme abaixo como substituição para modelos mais recentes.
+## De toda forma, você também não precisa expor isso, já que o userdata é aplicado na instancia.
+# output "userdata" {
+#   description = "file userdata"
+#   value       = data.template_file.userdata
+# }
 
 output "extra_volume_devices" {
   value = var.ec2_mountpoint

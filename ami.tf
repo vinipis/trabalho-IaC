@@ -9,6 +9,7 @@ data "aws_ami" "selected" {
 
   filter {
     name   = "virtualization-type"
-    values = [var.ami_virtualization]
+    ## Dificilmente você mudará de hvm para pv. Mas, fica a dica.
+    values = ["hvm"]
   }
 }

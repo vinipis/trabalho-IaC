@@ -15,7 +15,11 @@ resource "aws_instance" "vini-server" {
   key_name = aws_key_pair.vini-key.key_name # Substitua pela sua Chava ssh em key_pair via key_pair.tf
 
   #Não sei se vale bonus, mas aqui tem um template para rodar alguns comandos na hora do bot da maquina
-  user_data = data.template_file.userdata.rendered
+  ## Substituindo o uso do template_file (depreciado) pelo uso de locals e templatefile()
+  ## DE...
+  #user_data = data.template_file.userdata.rendered
+  ## PARA...
+  user_data = local.template_userdata
   user_data_replace_on_change = true
 
   tags = {
