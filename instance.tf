@@ -1,3 +1,11 @@
+locals {
+  tags_name = {
+    customer = "vini"
+    protocolo = "fiap"
+    snapshotdiario = "yes"
+  }
+}
+
 resource "aws_instance" "vini-server" {
   ami             = data.aws_ami.selected.id # Substitua pela AMI em owners e ami_name_pattern via variavel
   instance_type   = var.instance_type
@@ -7,25 +15,24 @@ resource "aws_instance" "vini-server" {
   key_name = aws_key_pair.vini-key.key_name # Substitua pela sua Chava ssh em key_pair via key_pair.tf
 
   #Não sei se vale bonus, mas aqui tem um template para rodar alguns comandos na hora do bot da maquina
-  #  user_data = data.template_file.userdata.rendered
-  #  user_data_replace_on_change = true
+  user_data = data.template_file.userdata.rendered
+  user_data_replace_on_change = true
 
   tags = {
     Name = var.instance_name
   }
+}
 
-  dynamic "ebs_block_device" {
-    for_each = var.ebs_volumes
-    content {
-      device_name           = ebs_block_device.value.device_name
-      volume_size           = ebs_block_device.value.volume_size
-      volume_type           = ebs_block_device.value.volume_type
-      delete_on_termination = true
-      encrypted             = try(ebs_block_device.value.encrypted, true)
-      iops                  = try(ebs_block_device.value.iops, null)
-      throughput            = try(ebs_block_device.value.throughput, null)
-    }
-  }
-  user_data = data.template_file.userdata.rendered
-  user_data_replace_on_change = true
+resource "aws_ebs_volume" "vini-server" {
+  type = "gp2"
+  availability_zone = aws_instance.vini-server.availability_zone
+  tags = merge(local.tags_name)
+  size = 50
+}
+
+resource "aws_volume_attachment" "vini-server" {
+  device_name = "/dev/sdd"
+  volume_id = aws_ebs_volume.vini-server.id
+  instance_id = aws_instance.vini-server.id
+  depends_on = [ aws_instance.vini-server ]
 }

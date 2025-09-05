@@ -44,34 +44,26 @@ EOF
   systemctl restart docker
 fi
 
-### Mounting Volumes
-devices="${device_list}"
-i=1
-for dev in $devices; do
-  realdev=$(readlink -f "$dev" || echo "$dev")
-
-  # Formata se ainda não tiver filesystem
-  if ! blkid "$realdev" >/dev/null 2>&1; then
-    mkfs -t xfs "$realdev"
-  fi
-
-  mkdir -p "/mnt/data${i}"
-
-  # Usa UUID no fstab (mais estável em instâncias Nitro/NVMe)
-  uuid=$(blkid -s UUID -o value "$realdev")
-  if ! grep -q "$uuid" /etc/fstab; then
-    echo "UUID=${uuid} /mnt/data${i} xfs defaults,nofail 0 2" >> /etc/fstab
-  fi
-
-  i=$((i+1))
-done
-
-systemctl daemon-reload || true
-mount -a
-
 # Habilita serviços
 systemctl enable --now docker
 systemctl enable --now chrony
+
+### Mounting Volumes
+if [[ -b "/dev/nvme1n1" ]]; then
+    # Check if the device is unformatted
+    if [[ -z $(lsblk -no FSTYPE "/dev/nvme1n1") ]]; then
+      parted /dev/nvme1n1 mklabel gpt
+      parted /dev/nvme1n1 mkpart primary ext4 0% 100%
+      sleep 5
+      mkfs.ext4 /dev/nvme1n1
+      #With device path
+      #echo "/dev/sdb1 /nodes  ext4  defaults  0 0" >>/etc/fstab
+      #With UUID
+      echo "UUID=$(blkid -s UUID -o value /dev/nvme1n1;) /nodes  ext4  defaults  0 0" >>/etc/fstab
+      mkdir -p ${mountpoint} 
+      mount -a
+    fi
+fi
 
 echo "Server is here" > ${mountpoint}/index.html
 docker run -d -p 80:80 -v ${mountpoint}:/usr/share/nginx/html nginx:latest

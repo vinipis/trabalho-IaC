@@ -30,25 +30,10 @@ variable "key_name" {
 /***********************
  * EBS
  ***********************/
-variable "ebs_volumes" {
-  description = "Volumes EBS extras a anexar à instância"
-  type = list(object({
-    device_name = string # ex.: /dev/sdb, /dev/sdc
-    volume_size = number
-    volume_type = string # gp3/gp2/io2/io1
-    encrypted   = optional(bool, true)
-    iops        = optional(number) # p/ io1/io2
-    throughput  = optional(number) # p/ gp3
-  }))
-  default = [
-    { device_name = "/dev/sdb", volume_size = 20, volume_type = "gp3" }
-  ]
-}
-
-variable "enable_auto_mount" {
-  description = "Formata e monta automaticamente os discos extras"
-  type        = bool
-  default     = true
+variable "ec2_mountpoint" {
+  type        = string
+  default     = "/vini"
+  description = "Default path for new attached disks."
 }
 
 /***********************

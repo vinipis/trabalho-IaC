@@ -35,5 +35,5 @@ output "userdata" {
 }
 
 output "extra_volume_devices" {
-  value = [for v in var.ebs_volumes : v.device_name]
+  value = var.ec2_mountpoint
 }
