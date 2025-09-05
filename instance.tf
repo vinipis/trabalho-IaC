@@ -1,3 +1,5 @@
+## LOCALS: São variáveis internas do terraform, que não precisam ser expostas como variáveis de entrada ou saída. 
+## Você não precisa delas se não estiver referenciando em outro lugar do código
 locals {
   tags_name = {
     customer = "vini"
@@ -22,9 +24,22 @@ resource "aws_instance" "vini-server" {
   user_data = local.template_userdata
   user_data_replace_on_change = true
 
+
   tags = {
+    ## Isso está legal. É para isso que serve o bloco tags.
     Name = var.instance_name
+    
+    ## AGORA, se vc quiser usar as variáveis que estão em locals, vc pode usar a função merge() para juntar os dois mapas (o de cima e o de baixo)
+    #Name = merge(local.tags_name, { Name = var.instance_name })
   }
+
+## USO DE LIFECYCLE: Certos blocos de atributos são sensíveis na AWS. Por exemplo, quando executar o "data.ami" e a carregar uma nova AMI, a instancia será recriada se o atributo "ami" for alterado. "Lifecyle ignore changes" te ajuda a não recriar uma máquina só porque a busca encontrou algo mais recente, a não ser que você queira.
+## Nome de chave ssh também é um dado que pode fazer uma máquina sadia ser recriada. Por isso foi adicionado aqui.  
+lifecycle {
+  ignore_changes = [
+    ami,
+    key_name ]
+}
 }
 
 resource "aws_ebs_volume" "vini-server" {
