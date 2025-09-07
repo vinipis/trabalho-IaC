@@ -24,7 +24,6 @@ resource "aws_instance" "vini-server" {
   user_data = local.template_userdata
   user_data_replace_on_change = true
 
-
   tags = {
     ## Isso está legal. É para isso que serve o bloco tags.
     Name = var.instance_name
@@ -39,7 +38,12 @@ lifecycle {
   ignore_changes = [
     ami,
     key_name ]
+  }
 }
+
+resource "aws_eip" "vini-server" {
+  instance = aws_instance.vini-server.id
+  tags = merge(local.tags_name)
 }
 
 resource "aws_ebs_volume" "vini-server" {
