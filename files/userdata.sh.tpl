@@ -4,17 +4,6 @@ set -euxo pipefail
 exec > >(tee -a /var/log/user-data.log) 2>&1
 
 export DEBIAN_FRONTEND=noninteractive
-#ADDING SWAPFILE
-if [[ ! -f /swapfile ]]; then
-  fallocate -l 4G /swapfile
-  dd if=/dev/zero of=/swapfile bs=4096 count=1048576
-  chmod 600 /swapfile
-  mkswap /swapfile
-  swapon /swapfile
-  echo "/swapfile swap swap defaults 0 0">>/etc/fstab
-  sysctl vm.swappiness=10
-  sysctl --system
-fi
 
 # Pacotes básicos
 apt-get update -y
@@ -59,11 +48,13 @@ if [[ -b "/dev/nvme1n1" ]]; then
       #With device path
       #echo "/dev/sdb1 /nodes  ext4  defaults  0 0" >>/etc/fstab
       #With UUID
-      echo "UUID=$(blkid -s UUID -o value /dev/nvme1n1;) /nodes  ext4  defaults  0 0" >>/etc/fstab
+      echo "UUID=$(blkid -s UUID -o value /dev/nvme1n1;) /vini  ext4  defaults  0 0" >>/etc/fstab
       mkdir -p ${mountpoint} 
       mount -a
     fi
 fi
 
-echo "Server is here" > ${mountpoint}/index.html
-docker run -d -p 80:80 -v ${mountpoint}:/usr/share/nginx/html nginx:latest
+# --- Limpeza para poupar disco ---
+apt-get clean
+rm -rf /var/lib/apt/lists/*
+journalctl --vacuum-size=50M || true
