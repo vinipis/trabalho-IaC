@@ -38,20 +38,55 @@ systemctl enable --now docker
 systemctl enable --now chrony
 
 ### Mounting Volumes
-if [[ -b "/dev/nvme1n1" ]]; then
-    # Check if the device is unformatted
-    if [[ -z $(lsblk -no FSTYPE "/dev/nvme1n1") ]]; then
-      parted /dev/nvme1n1 mklabel gpt
-      parted /dev/nvme1n1 mkpart primary ext4 0% 100%
-      sleep 5
-      mkfs.ext4 /dev/nvme1n1
-      #With device path
-      #echo "/dev/sdb1 /nodes  ext4  defaults  0 0" >>/etc/fstab
-      #With UUID
-      echo "UUID=$(blkid -s UUID -o value /dev/nvme1n1;) /vini  ext4  defaults  0 0" >>/etc/fstab
-      mkdir -p ${mountpoint} 
-      mount -a
-    fi
+echo "==== [START] Mounting Volumes ===="
+MOUNTPOINT="$${mountpoint:-/vini}"
+LABEL="VINI"
+
+# Candidatos comuns: NVMe (Nitro) e sd/xvd
+CANDIDATES="/dev/nvme1n1 /dev/nvme2n1 /dev/xvdf /dev/xvdd /dev/sdf /dev/sdd"
+DEVICE=""
+
+# Espera até 120s por qualquer candidato aparecer
+for i in $(seq 1 24); do
+  for d in $CANDIDATES; do
+    if [ -b "$d" ]; then DEVICE="$d"; break 2; fi
+  done
+  sleep 5
+done
+
+if [ -n "$DEVICE" ]; then
+  echo "Disco de dados detectado: $DEVICE"
+
+  # Garante partição 1
+  if ! lsblk -no NAME "$DEVICE" | grep -qE "$(basename "$DEVICE")p?1"; then
+    parted -s "$DEVICE" mklabel gpt
+    parted -s "$DEVICE" mkpart primary ext4 0% 100%
+    udevadm settle || true
+    sleep 3
+  fi
+
+  # Nome correto da partição
+  if echo "$DEVICE" | grep -q nvme; then
+    PART="$${DEVICE}p1"
+  else
+    PART="$${DEVICE}1"
+  fi
+
+  # Formata se ainda não tiver FS
+  if [ -z "$(lsblk -no FSTYPE "$PART")" ]; then
+    mkfs.ext4 -F -L "$LABEL" "$PART"
+  fi
+
+  # fstab por LABEL (robusto) e montagem
+  mkdir -p "$MOUNTPOINT"
+  if ! grep -q "LABEL=$LABEL" /etc/fstab; then
+    echo "LABEL=$LABEL $MOUNTPOINT ext4 defaults,nofail 0 0" >> /etc/fstab
+  fi
+
+  mount -a
+  echo "Montado: $PART -> $MOUNTPOINT"
+else
+  echo "Nenhum disco de dados detectado; pulando montagem."
 fi
 
 # --- Limpeza para poupar disco ---

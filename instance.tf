@@ -47,10 +47,10 @@ resource "aws_eip" "vini-server" {
 }
 
 resource "aws_ebs_volume" "vini-server" {
-  type = "gp2"
+  type = "gp3"
   availability_zone = aws_instance.vini-server.availability_zone
   tags = merge(local.tags_name)
-  size = 50
+  size = 100
 }
 
 resource "aws_volume_attachment" "vini-server" {
