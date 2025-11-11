@@ -2,19 +2,19 @@
 ## Você não precisa delas se não estiver referenciando em outro lugar do código
 locals {
   tags_name = {
-    customer = "vini"
-    protocolo = "fiap"
+    customer = "vidaefuturo"
+    protocolo = "projeto"
     ## no lugar deste comentário antes havia "snapshotdiario" que eu sei de onde vc tirou :) Isso só serve no contexto que estava, fora não faz muito uso.
   }
 }
 
-resource "aws_instance" "vini-server" {
+resource "aws_instance" "vidaefuturo" {
   ami             = data.aws_ami.selected.id # Substitua pela AMI em owners e ami_name_pattern via variavel
   instance_type   = var.instance_type
   security_groups = [aws_security_group.allow_ssh_http.name] #Bonus 1 outros componentes (SG)
 
   #Bonus 4 colocar uma secrets (estou fazendo com ssh mais comlexo)
-  key_name = aws_key_pair.vini-key.key_name # Substitua pela sua Chava ssh em key_pair via key_pair.tf
+  key_name = aws_key_pair.vidaefuturo-key.key_name # Substitua pela sua Chava ssh em key_pair via key_pair.tf
 
   #Não sei se vale bonus, mas aqui tem um template para rodar alguns comandos na hora do bot da maquina
   ## Substituindo o uso do template_file (depreciado) pelo uso de locals e templatefile()
@@ -41,21 +41,21 @@ lifecycle {
   }
 }
 
-resource "aws_eip" "vini-server" {
-  instance = aws_instance.vini-server.id
+resource "aws_eip" "vidaefuturo" {
+  instance = aws_instance.vidaefuturo.id
   tags = merge(local.tags_name)
 }
 
-resource "aws_ebs_volume" "vini-server" {
+resource "aws_ebs_volume" "vidaefuturo" {
   type = "gp3"
-  availability_zone = aws_instance.vini-server.availability_zone
+  availability_zone = aws_instance.vidaefuturo.availability_zone
   tags = merge(local.tags_name)
   size = 100
 }
 
-resource "aws_volume_attachment" "vini-server" {
+resource "aws_volume_attachment" "vidaefuturo" {
   device_name = "/dev/sdd"
-  volume_id = aws_ebs_volume.vini-server.id
-  instance_id = aws_instance.vini-server.id
-  depends_on = [ aws_instance.vini-server ]
+  volume_id = aws_ebs_volume.vidaefuturo.id
+  instance_id = aws_instance.vidaefuturo.id
+  depends_on = [ aws_instance.vidaefuturo ]
 }

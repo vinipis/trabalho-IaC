@@ -13,18 +13,18 @@ variable "vpc_id" {
 variable "instance_type" {
   description = "tipo de instancia EC2"
   type        = string
-  default     = "t2.micro"
+  default     = "t3.small"
 }
 
 variable "instance_name" {
   description = "Tag Name da instancia"
   type        = string
-  default     = "vini-server"
+  default     = "vidaefuturo"
 }
 
 variable "key_name" {
   description = "Nome do Key Pair a ser criado/usado no server"
-  default     = "vini-key" #pode ser qualquer nome, coloquei o meu como exemplo
+  default     = "vidaefuturo-key" #pode ser qualquer nome, coloquei o meu como exemplo
 }
 
 /***********************
@@ -32,7 +32,7 @@ variable "key_name" {
  ***********************/
 variable "ec2_mountpoint" {
   type        = string
-  default     = "/vini"
+  default     = "/vidaefuturo"
   description = "Default path for new attached disks."
 }
 

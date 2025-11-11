@@ -39,8 +39,8 @@ systemctl enable --now chrony
 
 ### Mounting Volumes
 echo "==== [START] Mounting Volumes ===="
-MOUNTPOINT="$${mountpoint:-/vini}"
-LABEL="VINI"
+MOUNTPOINT="$${mountpoint:-/vidaefuturo}"
+LABEL="PROJETO"
 
 # Candidatos comuns: NVMe (Nitro) e sd/xvd
 CANDIDATES="/dev/nvme1n1 /dev/nvme2n1 /dev/xvdf /dev/xvdd /dev/sdf /dev/sdd"

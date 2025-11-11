@@ -1,17 +1,17 @@
 #Aqui estão as saidas mais bonitinhas no terminal
 output "instance_id" {
   description = "ID da instancia"
-  value       = aws_instance.vini-server.id
+  value       = aws_instance.vidaefuturo.id
 }
 
 output "public_ip" {
   description = "IP publico da instancia"
-  value       = aws_instance.vini-server.public_ip
+  value       = aws_instance.vidaefuturo.public_ip
 }
 
 output "public_dns" {
   description = "dns publico"
-  value       = aws_instance.vini-server.public_dns
+  value       = aws_instance.vidaefuturo.public_dns
 }
 
 output "ami_id" {
@@ -21,7 +21,7 @@ output "ami_id" {
 
 output "key_pair_name" {
   description = "nome da chave"
-  value       = aws_key_pair.vini-key.key_name
+  value       = aws_key_pair.vidaefuturo-key.key_name
 }
 
 output "security_group_id" {
